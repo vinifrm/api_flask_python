@@ -1,3 +1,4 @@
+# ~/Google Drive/estudos/data science, machine learning, estatistica/Udemy/crie apis rest com python e flask/api
 import pandas as pd
 from flask import Flask, jsonify
 
@@ -14,7 +15,8 @@ from flask import Flask, jsonify
     # 
 
 app = Flask(__name__) # armazena um nome único para esse arquivo; variável setada automaticamente pelo Python
-purchase_orders = { # dicionário que vai conter os pedidos de compra, com os itens pedidos
+purchase_orders = [
+    { # dicionário que vai conter os pedidos de compra, com os itens pedidos
     'id': 1,
     'descricao': 'Pedido de compra',
     'items': [
@@ -23,8 +25,9 @@ purchase_orders = { # dicionário que vai conter os pedidos de compra, com os it
             'descricao': 'Item do pedido 1',
             'preco': 20.99
         }
-    ]
-} 
+            ]
+    } 
+]
 
 
 # função para retornar os pedidos (lista) (GET)
@@ -36,7 +39,13 @@ def get_purchase_orders():
     return jsonify(purchase_orders)
 
 # função para retonar os pedidos usando filtro por id (GET)
-
+@app.route('/purchase_orders/<int:id>')
+def get_purchase_orders_by_id(id):
+    for po in purchase_orders:
+        if po['id'] == id:
+            return jsonify(po)
+        
+    return jsonify({'message': 'Pedido {} não encontrado'.format(id)})
 
 # endpoint aonde será possível inserir um novo pedido (POST)
 
