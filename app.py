@@ -30,6 +30,7 @@ purchase_orders = { # dicionário que vai conter os pedidos de compra, com os it
 # função para retornar os pedidos (lista) (GET)
     # apenas retornar um json
     # verificar a rota no navegador
+    #
 @app.route('/purchase_orders')
 def get_purchase_orders():
     return jsonify(purchase_orders)
