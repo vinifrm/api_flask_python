@@ -79,8 +79,23 @@ def get_purchase_orders_items(id): # o id é resgatado da URL
     return jsonify({'message': 'Id {} de pedido não encontrado'.format(id)})
 
 # função para inserir um novo item
+@app.route('/purchase_orders/<int:id>/items', methods = ['POST'])
+def create_purchase_orders_items(id): # o id é resgatado da URL
 
+    req_data = request.get_json() # pega o json que chega na requisição
+    for po in purchase_orders:
+        if po['id'] == id:
+            po['items'].append(
+                {
+                    'id': req_data['id'],
+                    'description': req_data['description'],
+                    'preco': req_data['preco']
+                }
+            )
 
+            return jsonify(po)
+        
+    return jsonify({'message': 'Id {} de pedido não encontrado'.format(id)})
 
 # função home para retornar o hello world
 @app.route('/')
