@@ -1,6 +1,6 @@
 # ~/Google Drive/estudos/data science, machine learning, estatistica/Udemy/crie apis rest com python e flask/api
 import pandas as pd
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 # decorators e rotas -> 
     # a função deve estar atrelada a uma rota; a função será executada quando a rota for a especificada
@@ -47,11 +47,36 @@ def get_purchase_orders_by_id(id):
         
     return jsonify({'message': 'Pedido {} não encontrado'.format(id)})
 
-# endpoint aonde será possível inserir um novo pedido (POST)
+# endpoint aonde será possível inserir um novo pedido (POST) (purchase_orders)
+    # indicar que é POST o método aceito pela rota
+    # necessário resgatar no body os valores que o client está tentando criar; resgata o valor que o usuário está inserindo/enviando
+        # o pacote request permite pegar tudo que está no body e armazenar em uma variável, usando request.get_json()
+    # resgatar valores de um pedido
+    # append
+    # retornar objeto
+@app.route('/purchase_orders', methods = ['POST'])
+def create_purchase_order():
+
+    purchase_data = request.get_json()
+    purchase_order = {
+        'id': purchase_data['id'],
+        'description': purchase_data['description'],
+        'items': []
+    }
+
+    purchase_orders.append(purchase_order)
+
+    return jsonify(purchase_order)
 
 
-# função para obter os itens de pedido especifico
-
+# função para obter e retornar os itens de pedido especifico
+@app.route('/purchase_orders/<int:id>/items')
+def get_purchase_orders_items(id): # o id é resgatado da URL
+    for po in purchase_orders:
+        if po['id'] == id:
+            return jsonify(po['items'])
+    
+    return jsonify({'message': 'Id {} de pedido não encontrado'.format(id)})
 
 # função para inserir um novo item
 
