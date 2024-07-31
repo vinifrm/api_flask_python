@@ -21,7 +21,7 @@ purchase_orders = [
 # para criar um recurso, vamos criar uma classe
 # deve herdar da classe Resource
 
-class PurchaseOrders(Resource): # recurso
+class PurchaseOrdersItems(Resource): # recurso
 
     parser = reqparse.RequestParser()
     parser.add_argument( # define-se os parâmetros da requisição desejados
@@ -36,30 +36,35 @@ class PurchaseOrders(Resource): # recurso
         required = True,
         help = 'Informe uma descrição' # mensagem caso o parâmetro esteja incorreto
     ) 
-
-    # já temos as funções get e post para serem sobrescritas
-    # deve retornar um json em memória
-    def get(self):
-        return jsonify(purchase_orders)
-
-    def post(self):
-        purchase_data = PurchaseOrders.parser.parse_args() # pegando os parâmetros inseridos no corpo da requisição
-        purchase_order = {
-            'id': purchase_data['id'],
-            'description': purchase_data['description'],  # alterado para 'descricao' para manter consistência
-            'items': []
-        }
-
-        purchase_orders.append(purchase_order)
-
-        return jsonify(purchase_order)
-
-class PurchaseOrderById(Resource): # recurso
+    parser.add_argument( # define-se os parâmetros da requisição desejados
+        'price',  # alterado para 'descricao' para manter consistência
+        type = float,
+        required = True,
+        help = 'Informe um preço' # mensagem caso o parâmetro esteja incorreto
+    ) 
 
     def get(self, id):
 
         for po in purchase_orders:
             if po['id'] == id:
+                return jsonify(po['items'])
+    
+        return jsonify({'message': 'Id {} de pedido não encontrado'.format(id)})
+    
+    def post(self, id):
+
+        req_data = PurchaseOrdersItems.parser.parse_args() # pega o json que chega na requisição
+
+        for po in purchase_orders:
+            if po['id'] == id:
+                po['items'].append(
+                    {
+                        'id': req_data['id'],
+                        'description': req_data['description'],
+                        'price': req_data['price']
+                    }
+                )
+
                 return jsonify(po)
             
-        return jsonify({'message': 'Pedido {} não encontrado'.format(id)})
+        return jsonify({'message': 'Id {} de pedido não encontrado'.format(id)})
